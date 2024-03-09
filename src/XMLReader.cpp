@@ -3,7 +3,6 @@
 #include "XMLEntity.h"
 #include <queue>
 #include <expat.h>
-#include <iostream>
 
 struct CXMLReader::SImplementation{
     std::shared_ptr< CDataSource > DDataSource;
