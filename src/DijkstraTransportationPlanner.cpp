@@ -11,10 +11,15 @@ struct CDijkstraTransportationPlanner::SImplementation{
     CDijkstraPathRouter DFastestPathRouterBike;
     CDijkstraPathRouter DFastestPathRouteWalkBus;
 
-    SImplementation(std::shared_ptr<SConfiguration> config){
+	static bool StopIDCompare(std::shared_ptr< CStreetMap::SNode > left, std::shared_ptr< CStreetMap::SNode > right){
+        return left->ID() < right->ID();
+    }
+
+    SImplementation(std::shared_ptr< SConfiguration > config){
         DStreetMap = config->StreetMap();
         DBusSystem = config->BusSystem();
 
+        // Goes through the Nodes within the Street map and adds the ids of the node to the path routes.
         for(size_t i = 0; i < DStreetMap->NodeCount(); i++){
             auto Node = DStreetMap->NodeByIndex(i);
             auto VertexID = DShortestPathRouter.AddVertex(Node->ID());
@@ -23,6 +28,7 @@ struct CDijkstraTransportationPlanner::SImplementation{
             DNodeToVertexID[(Node->ID())] = VertexID;
         }
 
+        // Goes through the Ways within the street map and adds the way attributes to the descriptions of the way
         for(size_t i = 0; i < DStreetMap->WayCount(); i++){
             auto Way = DStreetMap->WayByIndex(i);
             bool Bikable = Way->GetAttribute("Bicycle") == "no"; // Or do != "no" either or not really sure what he wants
@@ -40,7 +46,15 @@ struct CDijkstraTransportationPlanner::SImplementation{
     }
 
     std::shared_ptr<CStreetMap::SNode> SortedNodeByIndex(std::size_t index) const noexcept{
+	    std::vector < std::shared_ptr< CStreetMap::SNode > > DSortedStops;
 
+		for (size_t i = 0; i < DStreetMap->NodeCount(); i++){
+            auto CurrentStop = DStreetMap->NodeByIndex(i);
+			DSortedStops.push_back(CurrentStop);            
+        }
+        std::sort(DSortedStops.begin(),DSortedStops.end(), StopIDCompare);
+
+        return DSortedStops[index];
     }
 
     double FindShortestPath(TNodeID src, TNodeID dest, std::vector< TNodeID > &path){
@@ -56,7 +70,11 @@ struct CDijkstraTransportationPlanner::SImplementation{
     }
 
     double FindFastestPath(TNodeID src, TNodeID dest, std::vector< TTripStep > &path){
-
+        std::vector< CPathRouter::TVertexID > FastestPath;
+        auto SourceVertexID = DNodeToVertexID[src];
+        auto DestinationVertexID = DNodeToVertexID[dest];
+        auto Distance = DShortestPathRouter.FindShortestPath(SourceVertexID, DestinationVertexID, FastestPath);
+        path.clear();
     }
 
     bool GetPathDescription(const std::vector< TTripStep > &path, std::vector< std::string > &desc) const{

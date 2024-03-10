@@ -221,8 +221,8 @@ $(BIN_DIR)/testtpcl: $(OBJ_DIR)/TransportationPlannerCommandLine.o $(OBJ_DIR)/TP
 $(OBJ_DIR)/TPCommandLineTest.o: $(TESTSRC_DIR)/TPCommandLineTest.cpp $(INC_DIR)/TransportationPlannerCommandLine.h $(INC_DIR)/StringDataSink.h $(INC_DIR)/StringDataSource.h 
 	$(CXX) -o $(OBJ_DIR)/TPCommandLineTest.o $(CXXFLAG) -c $(TESTSRC_DIR)/TPCommandLineTest.cpp
 
-$(OBJ_DIR)/transplanner.o: $(SRC_DIR)/transplanner.cpp $(INC_DIR)/TransportationPlanner.h
-	$(CXX) -o $(OBJ_DIR)/transplanner.o $(CXXFLAG) -c $(SRC_DIR)/transplanner.cpp
+$(OBJ_DIR)/TransportationPlanner.o: $(SRC_DIR)/TransportationPlanner.cpp $(INC_DIR)/TransportationPlanner.h
+	$(CXX) -o $(OBJ_DIR)/TransportationPlanner.o $(CXXFLAG) -c $(SRC_DIR)/TransportationPlanner.cpp
 
 $(OBJ_DIR)/TPCommandLineTest.o: $(TESTSRC_DIR)/TPCommandLineTest.cpp $(INC_DIR)/TransportationPlannerCommandLine.h $(INC_DIR)/StringDataSink.h $(INC_DIR)/StringDataSource.h 
 	$(CXX) -o $(OBJ_DIR)/TPCommandLineTest.o $(CXXFLAG) -c $(TESTSRC_DIR)/TPCommandLineTest.cpp
