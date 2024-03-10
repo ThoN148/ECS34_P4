@@ -39,3 +39,5 @@ PathRouter.AddEdge(Vertices[_], Vertices[_], x): Adds an edge between the two ve
 
 EXPECT_EQ(12.0, PathRouter.FindShortestPath(Vertices[_], Vertices[_], Route)): Executes the code to find the shortest path within the given graph and then returns the weight it is. First input would be the expected weight while the second is the code.
 
+## Issues
+No issues within these function and code. All code can be executed correctly.

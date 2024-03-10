@@ -60,9 +60,9 @@ struct CDijkstraPathRouter::SImplementation{
     // Returns the path distance of the path from src to dest, and fills out path with vertices.
     // If no path exists NoPathExists is returned.
     double FindShortestPath(TVertexID src, TVertexID dest, std::vector<TVertexID>& path) noexcept {
-        std::vector<TVertexID> PendingVertices;
-        std::vector<double> Distances(DVerticies.size(), CPathRouter::NoPathExists);
-        std::vector<double> Previous(DVerticies.size(), CPathRouter::InvalidVertexID);
+        std::vector< TVertexID > PendingVertices;
+        std::vector< double > Distances(DVerticies.size(), CPathRouter::NoPathExists);
+        std::vector< double > Previous(DVerticies.size(), CPathRouter::InvalidVertexID);
         auto VertexCompare = [&Distances] (TVertexID left, TVertexID right) {return Distances[left] < Distances[right];};
 
         Distances[src] = 0.0;

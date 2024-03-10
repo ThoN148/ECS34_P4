@@ -95,19 +95,20 @@ struct CDijkstraTransportationPlanner::SImplementation{
         }
 
         auto Distance = DShortestPathRouter.FindShortestPath(SourceVertexID, DestinationVertexID, ShortestPath);
-        path.clear();
+        path.clear(); // Empty out anything in the path
 
-        // ??
+        // After executing command shortest path should not be empty
+        /*if(!ShortestPath.empty()){
+            std::cout << "NOT EMPTY\n";
+        }
+        else{
+            std::cout << "EMPTY\n";
+        }*/
+
+        // Pushes the nodes into the path vector
         for(auto VertexID :  ShortestPath){
-            path.push_back(std::any_cast< TNodeID >(DShortestPathRouter.GetVertexTag(VertexID)));
+            path.push_back(DShortestPathRouter.AddVertex(VertexID));
         }
-
-        // Checks out what the shortest path is
-        std::cout << "Shortest path from node " << src << " to node " << dest << ":\n";
-        for(size_t i = 0; i < path.size(); i++){
-            std::cout << path[i] << " -> ";
-        }
-        std::cout << "\n";
 
         return Distance;
     }
