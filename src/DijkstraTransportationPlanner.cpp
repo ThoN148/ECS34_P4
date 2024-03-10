@@ -1,17 +1,27 @@
 #include "DijkstraTransportationPlanner.h"
 #include "DijkstraPathRouter.h"
+#include "GeographicUtils.h"
 #include <unordered_map>
 #include <vector>
+#include <algorithm>
+#include <iostream>
 
 struct CDijkstraTransportationPlanner::SImplementation{
+    // Setting Variables for the Maps / Systems
     std::shared_ptr< CStreetMap > DStreetMap;
     std::shared_ptr< CBusSystem > DBusSystem;
-    std::unordered_map< CStreetMap::TNodeID, CPathRouter::TVertexID > DNodeToVertexID; 
+
+    // Setting Variables up for the path ways
     CDijkstraPathRouter DShortestPathRouter;
     CDijkstraPathRouter DFastestPathRouterBike;
     CDijkstraPathRouter DFastestPathRouteWalkBus;
 
-	static bool StopIDCompare(std::shared_ptr< CStreetMap::SNode > left, std::shared_ptr< CStreetMap::SNode > right){
+    //Setting Variables for the Vertex / Nodes
+    std::unordered_map< CStreetMap::TNodeID, CPathRouter::TVertexID > DNodeToVertexID;
+    std::vector< std::shared_ptr< CStreetMap::SNode > > DSortedNodes;
+
+    // Setting up the condition to sort
+	static bool NodeIDCompare(std::shared_ptr< CStreetMap::SNode > left, std::shared_ptr< CStreetMap::SNode > right){
         return left->ID() < right->ID();
     }
 
@@ -26,59 +36,97 @@ struct CDijkstraTransportationPlanner::SImplementation{
             DFastestPathRouterBike.AddVertex(Node->ID());
             DFastestPathRouteWalkBus.AddVertex(Node->ID());
             DNodeToVertexID[(Node->ID())] = VertexID;
+
+
         }
 
         // Goes through the Ways within the street map and adds the way attributes to the descriptions of the way
         for(size_t i = 0; i < DStreetMap->WayCount(); i++){
             auto Way = DStreetMap->WayByIndex(i);
-            bool Bikable = Way->GetAttribute("Bicycle") == "no"; // Or do != "no" either or not really sure what he wants
-            bool Bidirectional = Way->GetAttribute("oneway") == "yes"; //same as above do either == or !=
-            auto PreviousNodeID = Way->GetNodeID(0);
 
+            // Creating boolean values
+            bool Bikable = Way->GetAttribute("Bicycle") != "no"; // Or do != "no" either or not really sure what he wants
+            bool Bidirectional = Way->GetAttribute("oneway") != "yes"; //same as above do either == or !=
+
+            //
+            auto PreviousNodeID = Way->GetNodeID(0);
             for(size_t j = 1; j < Way->NodeCount(); j++){
                 auto NextNodeID = Way->GetNodeID(j);
             }
         }
+
+        // Adds the nodes to the vector
+        for(size_t i = 0; i < DStreetMap->NodeCount(); i++){
+            auto currNode = DStreetMap->NodeByIndex(i);
+            DSortedNodes.push_back(currNode);
+        }
+        
+        // Sort out the nodes
+        std::sort(DSortedNodes.begin(), DSortedNodes.end(), NodeIDCompare);
     }
 
+
+    // Returns the number of nodes in the street map
     std::size_t NodeCount() const noexcept{
         return DStreetMap->NodeCount();
     }
 
+    // Returns the street map node specified by index if index is less than the NodeCount().
+    // Nullptr is returned if index is greater than or equal to NodeCount().
+    // The nodes are sorted by Node ID.
     std::shared_ptr<CStreetMap::SNode> SortedNodeByIndex(std::size_t index) const noexcept{
-	    std::vector < std::shared_ptr< CStreetMap::SNode > > DSortedStops;
-
-		for (size_t i = 0; i < DStreetMap->NodeCount(); i++){
-            auto CurrentStop = DStreetMap->NodeByIndex(i);
-			DSortedStops.push_back(CurrentStop);            
+        if(index < NodeCount()){
+            return DSortedNodes[index];
         }
-        std::sort(DSortedStops.begin(),DSortedStops.end(), StopIDCompare);
 
-        return DSortedStops[index];
+        return nullptr;
     }
 
+    // Returns the distance in miles between the src and dest nodes of the shortest path if one exists.
+    // NoPathExists is returned if no path exists.
+    // The nodes of the shortest path are filled in the path parameter.
     double FindShortestPath(TNodeID src, TNodeID dest, std::vector< TNodeID > &path){
         std::vector< CPathRouter::TVertexID > ShortestPath;
         auto SourceVertexID = DNodeToVertexID[src];
         auto DestinationVertexID = DNodeToVertexID[dest];
+
+        if(!DShortestPathRouter.VertexCount()){
+            return CPathRouter::NoPathExists;
+        }
+
         auto Distance = DShortestPathRouter.FindShortestPath(SourceVertexID, DestinationVertexID, ShortestPath);
         path.clear();
 
+        // ??
         for(auto VertexID :  ShortestPath){
-            path.push_back(VertexID);
+            path.push_back(std::any_cast< TNodeID >(DShortestPathRouter.GetVertexTag(VertexID)));
         }
+
+        // Checks out what the shortest path is
+        std::cout << "Shortest path from node " << src << " to node " << dest << ":\n";
+        for(size_t i = 0; i < path.size(); i++){
+            std::cout << path[i] << " -> ";
+        }
+        std::cout << "\n";
+
+        return Distance;
     }
 
+    // Returns the time in hours for the fastest path between the src and dest nodes of the if one exists.
+    // NoPathExists is returned if no path exists.
+    // The transportation mode and nodes of the fastest path are filled in the path parameter.
     double FindFastestPath(TNodeID src, TNodeID dest, std::vector< TTripStep > &path){
-        std::vector< CPathRouter::TVertexID > FastestPath;
-        auto SourceVertexID = DNodeToVertexID[src];
-        auto DestinationVertexID = DNodeToVertexID[dest];
-        auto Distance = DShortestPathRouter.FindShortestPath(SourceVertexID, DestinationVertexID, FastestPath);
-        path.clear();
+        std::vector< CTransportationPlanner::TTripStep > FastestPath;
+
+        
+        return CPathRouter::NoPathExists;
     }
 
+    // Returns true if the path description is created.
+    // Takes the trip steps path and converts it into a human readable set of steps.
     bool GetPathDescription(const std::vector< TTripStep > &path, std::vector< std::string > &desc) const{
-
+        // This is extra credit :) (Do when finished, if possible)
+        return true;
     }
 };
 

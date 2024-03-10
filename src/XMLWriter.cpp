@@ -1,6 +1,7 @@
 #include "XMLWriter.h"
 #include "StringUtils.h"
 #include "XMLEntity.h"
+#include <iostream>
 
 struct CXMLWriter::SImplementation {
 
@@ -93,6 +94,7 @@ struct CXMLWriter::SImplementation {
 		std::vector< char > currEntityVect;
 		for (int i = 0; i < currEntity.length(); i++) {
 			currEntityVect.push_back(currEntity[i]);
+			std::cout << currEntity[i];
 		}
 
 		DSink->Write(currEntityVect);
