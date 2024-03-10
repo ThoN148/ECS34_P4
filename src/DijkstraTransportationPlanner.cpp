@@ -35,7 +35,6 @@ struct CDijkstraTransportationPlanner::SImplementation{
         }
     }
 
-
     std::size_t NodeCount() const noexcept{
         return DStreetMap->NodeCount();
     }
@@ -52,7 +51,7 @@ struct CDijkstraTransportationPlanner::SImplementation{
         path.clear();
 
         for(auto VertexID :  ShortestPath){
-            path.push_back();
+            path.push_back(VertexID);
         }
     }
 
