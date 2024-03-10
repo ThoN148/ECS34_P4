@@ -1,6 +1,7 @@
 #include "DijkstraPathRouter.h"
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 struct CDijkstraPathRouter::SImplementation{
     using TEdge = std::pair< double , TVertexID >;
@@ -33,7 +34,12 @@ struct CDijkstraPathRouter::SImplementation{
     bool AddEdge(TVertexID src, TVertexID dest, double weight, bool bidir = false) noexcept{
         if((src < DVerticies.size()) && (dest < DVerticies.size()) && (0.0 <= weight)){
             DVerticies[src].DEdges.push_back(std::make_pair(weight,dest));
+
+            if(bidir){
+                DVerticies[dest].DEdges.push_back(std::make_pair(weight, src));
+            }
             return true;
+
         }
         return false;
     }
@@ -42,52 +48,54 @@ struct CDijkstraPathRouter::SImplementation{
         return true;
     }
 
-    double FindShortestPath(TVertexID src, TVertexID dest, std::vector<TVertexID> &path) noexcept{
-        std::vector< TVertexID > PendingVerticies;
-        std::vector< TVertexID > Previous(DVerticies.size(), CPathRouter::InvalidVertexID);
-        std::vector< double > Distances(DVerticies.size(), CPathRouter::NoPathExists);
-        auto VertexCompare = [&Distances](TVertexID left, TVertexID right){return Distances[left] < Distances[right];};
+    double FindShortestPath(TVertexID src, TVertexID dest, std::vector<TVertexID>& path) noexcept {
+        std::vector<TVertexID> PendingVertices;
+        std::vector<double> Distances(DVerticies.size(), CPathRouter::NoPathExists);
+        std::vector<double> Previous(DVerticies.size(), CPathRouter::InvalidVertexID);
+        auto VertexCompare = [&Distances] (TVertexID left, TVertexID right) {return Distances[left] < Distances[right];};
 
         Distances[src] = 0.0;
-        PendingVerticies.push_back(src);
-        while(!PendingVerticies.empty()){
-            auto CurrentID = PendingVerticies.front();
-            std::pop_heap(PendingVerticies.begin(), PendingVerticies.end());
-            PendingVerticies.pop_back();
+        PendingVertices.push_back(src);
 
-            for(auto Edge : DVerticies[CurrentID].DEdges){
-                auto EdgeWeight = Edge.first;
-                auto DestID = Edge.second;
+        while (!PendingVertices.empty()){
+            auto CurrentID = PendingVertices.front(); 
+            std::pop_heap(PendingVertices.begin(), PendingVertices.end());
+            PendingVertices.pop_back();
+            // make faster if currentID is == to dest
+            // add if and break here
+            for (auto edge: DVerticies[CurrentID].DEdges){
+                auto EdgeWeight = edge.first;
+                auto DestID = edge.second;
                 auto TotalDistance = Distances[CurrentID] + EdgeWeight;
-                if(TotalDistance < Distances[DestID]){
+                if (TotalDistance < Distances[DestID]){
                     if(CPathRouter::NoPathExists == Distances[DestID]){
-                        PendingVerticies.push_back(DestID);
+                        PendingVertices.push_back(DestID);
                     }
-
                     Distances[DestID] = TotalDistance;
                     Previous[DestID] = CurrentID;
-
                 }
             }
-            std::make_heap(PendingVerticies.begin(), PendingVerticies.end(), VertexCompare);
+            std::make_heap(PendingVertices.begin(), PendingVertices.end(), VertexCompare);
         }
         if(CPathRouter::NoPathExists == Distances[dest]){
             return CPathRouter::NoPathExists;
         }
-        double PathDistance = 0.0;
-        path.clear();
-        do{
-            path.push_back(dest);
-            dest = Previous[dest];
-        }while(dest != src);
 
+        double PathDistance = Distances[dest];
+        path.clear();
+        path.push_back(dest);
+        do{
+            dest = Previous[dest];
+            path.push_back(dest);
+        }while (dest != src);
         std::reverse(path.begin(), path.end());
-        return PathDistance;
+        return PathDistance;       
     }
+
 };
 
 CDijkstraPathRouter::CDijkstraPathRouter(){
-
+    DImplementation = std::make_unique< SImplementation >();
 }
 
 CDijkstraPathRouter::~CDijkstraPathRouter(){

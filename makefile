@@ -51,6 +51,10 @@ run_testxml: $(BIN_DIR)/xmltest
 	$(BIN_DIR)/xmltest --gtest_output=xml:$(TEST_TMP_DIR)/run_testxml
 	mv $(TEST_TMP_DIR)/run_testxml run_testxml
 
+run_testkml:$(BIN_DIR)/testkml
+	$(BIN_DIR)/testkml --gtest_output=xml:$(TEST_TMP_DIR)/run_testkml
+	mv $(TEST_TMP_DIR)/run_testkml /run_testkml
+
 run_testcsvbs: $(BIN_DIR)/testcsvbs
 	$(BIN_DIR)/testcsvbs --gtest_output=xml:$(TEST_TMP_DIR)/run_testcsvbs
 	mv $(TEST_TMP_DIR)/run_testcsvbs run_testcsvbs
@@ -71,9 +75,6 @@ run_testtp: $(BIN_DIR)/testtp
 	$(BIN_DIR)/testtp --gtest_output=xml:$(TEST_TMP_DIR)/run_testtp
 	mv $(TEST_TMP_DIR)/run_testtp run_testtp
 
-run_testkml:$(BIN_DIR)/testkml
-	$(BIN_DIR)/testkml --gtest_output=xml:$(TEST_TMP_DIR)/run_testkml
-	mv $(TEST_TMP_DIR)/run_testkml /run_testkml
 
 teststrutils: $(BIN_DIR)/teststrutils
 	$(BIN_DIR)/teststrutils
@@ -189,7 +190,7 @@ $(OBJ_DIR)/COpenStreetMap.o: $(SRC_DIR)/COpenStreetMap.cpp $(INC_DIR)/OpenStreet
 testdpr: $(BIN_DIR)/testdpr
 	$(BIN_DIR)/testdpr
 
-$(BIN_DIR)/testdpr: $(OBJ_DIR)/DijkstraPathRouter.o $(OBJ_DIR)/DijkstraTest.o $(OBJ_DIR)/DijkstraTransportationPlanner.o
+$(BIN_DIR)/testdpr: $(OBJ_DIR)/DijkstraPathRouter.o $(OBJ_DIR)/DijkstraTest.o
 	$(CXX) -o $(BIN_DIR)/testdpr $(CXXFLAG) $(OBJ_DIR)/DijkstraPathRouter.o $(OBJ_DIR)/DijkstraTest.o $(LDFLAGS)
 
 $(OBJ_DIR)/DijkstraTest.o: $(TESTSRC_DIR)/DijkstraTest.cpp $(SRC_DIR)/DijkstraPathRouter.cpp
@@ -202,29 +203,40 @@ $(OBJ_DIR)/DijkstraTransportationPlanner.o: $(SRC_DIR)/DijkstraTransportationPla
 	$(CXX) -o $(OBJ_DIR)/DijkstraTransportationPlanner.o $(CXXFLAG) -c $(SRC_DIR)/DijkstraTransportationPlanner.cpp
 
 testcsvbsi:
-$(BIN_DIR)/testcsvbsi: $(OBJ_DIR)/BusSystemIndexer.o $(OBJ_DIR)/CSVBusSystemIndexerTest.o 
-	$(CXX) -o $(BIN_DIR)/testcsvbsi $(CXXFLAGS) $(OBJ_DIR)/BusSystemIndexer.o $(OBJ_DIR)/CSVBusSystemIndexerTest.o $(LDFLAGS)
-
-$(OBJ_DIR)/CSVBusSystemIndexerTest.o: $(TESTSRC_DIR)/CSVBusSystemIndexerTest.cpp $(INC_DIR)/CSVBusSystemIndexer.h 
-	$(CXX) -o $(OBJ_DIR)/CSVBusSystemIndexerTest.o $(CXXFLAGS) -c $(TESTSRC_DIR)/CSVBusSystemIndexerTest.cpp
+$(BIN_DIR)/testcsvbsi: $(OBJ_DIR)/BusSystemIndexer.o $(OBJ_DIR)/CSVBusSystemIndexerTest.o $(OBJ_DIR)/CSVBusSystem.o $(OBJ_DIR)/StringDataSource.o $(OBJ_DIR)/DSVReader.o $(OBJ_DIR)/StringUtils.o
+	$(CXX) -o $(BIN_DIR)/testcsvbsi $(CXXFLAG) $(OBJ_DIR)/BusSystemIndexer.o $(OBJ_DIR)/CSVBusSystemIndexerTest.o $(OBJ_DIR)/CSVBusSystem.o $(OBJ_DIR)/StringDataSource.o $(OBJ_DIR)/DSVReader.o $(OBJ_DIR)/StringUtils.o $(LDFLAGS)
 
 $(OBJ_DIR)/BusSystemIndexer.o: $(SRC_DIR)/BusSystemIndexer.cpp $(INC_DIR)/BusSystemIndexer.h
-	$(CXX) -o $(OBJ_DIR)/BusSystemIndexer.o $(CXXFLAGS) -c $(SRC_DIR)/BusSystemIndexer.cpp
+	$(CXX) -o $(OBJ_DIR)/BusSystemIndexer.o $(CXXFLAG) -c $(SRC_DIR)/BusSystemIndexer.cpp
+
+$(OBJ_DIR)/CSVBusSystemIndexerTest.o: $(TESTSRC_DIR)/CSVBusSystemIndexerTest.cpp $(INC_DIR)/StringDataSource.h
+	$(CXX) -o $(OBJ_DIR)/CSVBusSystemIndexerTest.o $(CXXFLAG) -c $(TESTSRC_DIR)/CSVBusSystemIndexerTest.cpp
 
 testtp:
 
 testcl:
 
 testkml:
-$(BIN_DIR)/testkml: $(OBJ_DIR)/KMLWriter.o $(OBJ_DIR)/KMLTest.o 
-	$(CXX) -o $(BIN_DIR)/testkml $(CXXFLAG) $(OBJ_DIR)/KMLWriter.o $(OBJ_DIR)/KMLTest.o $(LDFLAGS)
+$(BIN_DIR)/testkml: $(OBJ_DIR)/KMLWriter.o $(OBJ_DIR)/KMLTest.o  $(OBJ_DIR)/kmlout.o
+	$(CXX) -o $(BIN_DIR)/testkml $(CXXFLAG) $(OBJ_DIR)/KMLWriter.o $(OBJ_DIR)/KMLTest.o $(OBJ_DIR)/kmlout.o $(LDFLAGS)
 
 $(OBJ_DIR)/KMLTest.o: $(TESTSRC_DIR)/KMLTest.cpp $(INC_DIR)/KMLWriter.h $(INC_DIR)/StringDataSink.h $(INC_DIR)/StringDataSource.h $(INC_DIR)/StringUtils.h 
-	$(CXX) -o $(OBJ_DIR)/TPCommandLineTest.o -c $(CXXFLAGS) $(TESTSRC_DIR)/KMLTest.cpp
+	$(CXX) -o $(OBJ_DIR)/KMLTest.o -c $(CXXFLAG) $(TESTSRC_DIR)/KMLTest.cpp
 
-$(OBJ_DIR)/kmlout.o: $(SRC_DIR)/kmlout.cpp $(INC_DIR)/KMLWriter.h
-	$(CXX) -o $(OBJ_DIR)/kmlout.o -c $(CXXFLAGS) $(SRC_DIR)/kmlout.cpp
+$(OBJ_DIR)/kmlout.o: $(SRC_DIR)/kmlout.cpp $(INC_DIR)/KMLWriter.h $(INC_DIR)/OpenStreetMap.h $(INC_DIR)/CSVBusSystem.h $(INC_DIR)/DSVReader.h $(INC_DIR)/DSVWriter.h $(INC_DIR)/FileDataFactory.h $(INC_DIR)/FileDataSink.h $(INC_DIR)/FileDataSource.h $(INC_DIR)/StandardDataSink.h $(INC_DIR)/StandardDataSource.h $(INC_DIR)/StandardErrorDataSink.h $(INC_DIR)/StringUtils.h
+	$(CXX) -o $(OBJ_DIR)/kmlout.o -c $(CXXFLAG) $(SRC_DIR)/kmlout.cpp
 
+$(OBJ_DIR)/KMLWriter.o: $(SRC_DIR)/KMLWriter.cpp $(INC_DIR)/KMLWriter.h $(INC_DIR)/XMLWriter.h $(INC_DIR)/StringUtils.h
+	$(CXX) -o $(OBJ_DIR)/KMLWriter.o -c $(CXXFLAG) $(SRC_DIR)/KMLWriter.cpp
+
+$(OBJ_DIR)/StandardDataSink.o: $(SRC_DIR)/StandardDataSink.cpp $(INC_DIR)/DataSink.h
+	$(CXX) -o $(OBJ_DIR)/StandardDataSink.o -c $(CXXFLAG) $(SRC_DIR)/StandardDataSink.cpp
+
+$(OBJ_DIR)/StandardDataSource.o: $(SRC_DIR)/StandardDataSource.cpp $(INC_DIR)/DataSource.h
+	$(CXX) -o $(OBJ_DIR)/StandardDataSource.o -c $(CXXFLAG) $(SRC_DIR)/StandardDataSource.cpp
+
+$(OBJ_DIR)/StandardErrorDataSink.o: $(SRC_DIR)/StandardErrorDataSink.cpp $(INC_DIR)/DataSink.h
+	$(CXX) -o $(OBJ_DIR)/StandardErrorDataSink.o -c $(CXXFLAG) $(SRC_DIR)/StandardErrorDataSink.cpp
 
 directories:
 	mkdir -p $(BIN_DIR)

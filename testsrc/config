@@ -1,6 +1,0 @@
-Host github.com
-    User git
-    Hostname gigithub-ECS34-P4
-    PrefferedAuthentications publickey
-    IdentityFile ~/.shh/gigithub-ECS34-P4
-    IdentitiesOnly yes

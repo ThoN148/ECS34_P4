@@ -1,8 +1,8 @@
-
 #include "BusSystemIndexer.h"
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+#include <iostream>
 
 struct CBusSystemIndexer::SImplementation{
 
@@ -18,12 +18,18 @@ struct CBusSystemIndexer::SImplementation{
 
 	std::shared_ptr< CBusSystem > DBusSystem;
     std::vector < std::shared_ptr< SStop > > DSortedStops;
+	std::vector < std::shared_ptr< SRoute > > DSortedRoutes; 
 	std::unordered_map < TNodeID, std::shared_ptr< SStop > > DNodeIDToStop;
 	std::unordered_map< std::pair< TNodeID, TNodeID >, std::unordered_set< std::shared_ptr< SRoute > >, pair_hash > DSrcDestToRoutes;
 	
 	static bool StopIDCompare(std::shared_ptr< SStop > left, std::shared_ptr< SStop > right){
         return left->ID() < right->ID();
     }
+
+	static bool RouteNameCompare(std::shared_ptr< SRoute > left, std::shared_ptr< SRoute > right){
+		return left->Name() < right->Name();
+	}
+	
 
 	SImplementation(std::shared_ptr< CBusSystem > bussystem){
 		DBusSystem = bussystem;
@@ -38,6 +44,7 @@ struct CBusSystemIndexer::SImplementation{
 
     	for (size_t i = 0; i < DBusSystem->RouteCount(); i++){
             auto CurrentRoute = DBusSystem->RouteByIndex(i);
+			DSortedRoutes.push_back(CurrentRoute);
             
      	    for (size_t j = 1; j < CurrentRoute->StopCount(); j++){
 
@@ -54,6 +61,8 @@ struct CBusSystemIndexer::SImplementation{
 				}
             }
         }
+
+		std::sort(DSortedRoutes.begin(), DSortedRoutes.end(), RouteNameCompare);
 	};
 	
     std::size_t StopCount() const noexcept{
@@ -72,8 +81,8 @@ struct CBusSystemIndexer::SImplementation{
 	}
 	
 	std::shared_ptr<SRoute> SortedRouteByIndex(std::size_t index) const noexcept{
-		if(index < DBusSystem->RouteCount()){
-			return DBusSystem->RouteByIndex(index);
+		if (index < DSortedRoutes.size()){
+			return DSortedRoutes[index];
 		}
 		return nullptr;
 	}

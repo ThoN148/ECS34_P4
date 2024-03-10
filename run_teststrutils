@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="15" failures="0" disabled="0" errors="0" time="0" timestamp="2024-03-10T01:42:41.827" name="AllTests">
+  <testsuite name="StringUtilsTest" tests="15" failures="0" disabled="0" skipped="0" errors="0" time="0" timestamp="2024-03-10T01:42:41.827">
+    <testcase name="SliceTest" file="./testsrc/StringUtilsTest.cpp" line="4" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.827" classname="StringUtilsTest" />
+    <testcase name="Capitalize" file="./testsrc/StringUtilsTest.cpp" line="13" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.827" classname="StringUtilsTest" />
+    <testcase name="Upper" file="./testsrc/StringUtilsTest.cpp" line="19" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.827" classname="StringUtilsTest" />
+    <testcase name="Lower" file="./testsrc/StringUtilsTest.cpp" line="26" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+    <testcase name="LStrip" file="./testsrc/StringUtilsTest.cpp" line="33" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+    <testcase name="RStrip" file="./testsrc/StringUtilsTest.cpp" line="42" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+    <testcase name="Strip" file="./testsrc/StringUtilsTest.cpp" line="51" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+    <testcase name="Center" file="./testsrc/StringUtilsTest.cpp" line="63" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+    <testcase name="LJust" file="./testsrc/StringUtilsTest.cpp" line="69" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+    <testcase name="RJust" file="./testsrc/StringUtilsTest.cpp" line="74" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+    <testcase name="Replace" file="./testsrc/StringUtilsTest.cpp" line="79" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+    <testcase name="Split" file="./testsrc/StringUtilsTest.cpp" line="85" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+    <testcase name="Join" file="./testsrc/StringUtilsTest.cpp" line="103" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+    <testcase name="ExpandTabs" file="./testsrc/StringUtilsTest.cpp" line="111" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+    <testcase name="EditDistance" file="./testsrc/StringUtilsTest.cpp" line="119" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:41.828" classname="StringUtilsTest" />
+  </testsuite>
+</testsuites>

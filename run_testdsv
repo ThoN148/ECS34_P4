@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="9" failures="0" disabled="0" errors="0" time="0" timestamp="2024-03-10T01:42:46.030" name="AllTests">
+  <testsuite name="DSVWriter" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0" timestamp="2024-03-10T01:42:46.030">
+    <testcase name="EmptyTest" file="./testsrc/DSVTest.cpp" line="8" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:46.030" classname="DSVWriter" />
+    <testcase name="SimpleTest" file="./testsrc/DSVTest.cpp" line="15" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:46.030" classname="DSVWriter" />
+    <testcase name="NewlineTest" file="./testsrc/DSVTest.cpp" line="24" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:46.030" classname="DSVWriter" />
+    <testcase name="QuotingTest" file="./testsrc/DSVTest.cpp" line="35" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:46.030" classname="DSVWriter" />
+    <testcase name="QuoteAllTest" file="./testsrc/DSVTest.cpp" line="44" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:46.030" classname="DSVWriter" />
+  </testsuite>
+  <testsuite name="DSVReader" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0" timestamp="2024-03-10T01:42:46.030">
+    <testcase name="EmptyTest" file="./testsrc/DSVTest.cpp" line="53" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:46.030" classname="DSVReader" />
+    <testcase name="SimpleTest" file="./testsrc/DSVTest.cpp" line="62" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:46.030" classname="DSVReader" />
+    <testcase name="NewlineTest" file="./testsrc/DSVTest.cpp" line="76" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:46.030" classname="DSVReader" />
+    <testcase name="QuotingTest" file="./testsrc/DSVTest.cpp" line="96" status="run" result="completed" time="0" timestamp="2024-03-10T01:42:46.030" classname="DSVReader" />
+  </testsuite>
+</testsuites>
