@@ -19,11 +19,14 @@ runtest:	run_teststrutils \
 			run_testfiledatass \
 			run_testdsv \
 			run_testxml \
+			run_testkml \
 			run_testcsvbs \
 			run_testosm \
 			run_testdpr \
 			run_testcsvbsi \
-			run_testtpcl
+			run_testtp \
+			run_testtpcl \
+			run_testspeed
 
 run_teststrutils: $(BIN_DIR)/teststrutils
 	$(BIN_DIR)/teststrutils --gtest_output=xml:$(TEST_TMP_DIR)/run_teststrutils
@@ -156,13 +159,13 @@ $(OBJ_DIR)/StringUtils.o: $(SRC_DIR)/StringUtils.cpp $(INC_DIR)/StringUtils.h
 xmltest: $(BIN_DIR)/xmltest
 	$(BIN_DIR)/xmltest
 
-$(BIN_DIR)/xmltest: $(OBJ_DIR)/XMLTest.o $(OBJ_DIR)/XMLWriter.o $(OBJ_DIR)/StringDataSink.o $(OBJ_DIR)/XMLReader.o $(OBJ_DIR)/StringDataSource.o
-	$(CXX) -o $(BIN_DIR)/xmltest $(OBJ_DIR)/XMLTest.o $(OBJ_DIR)/XMLWriter.o $(OBJ_DIR)/StringDataSink.o $(OBJ_DIR)/XMLReader.o $(OBJ_DIR)/StringDataSource.o $(LDFLAGS) 
+$(BIN_DIR)/xmltest: $(OBJ_DIR)/XMLTest.o $(OBJ_DIR)/XMLWriter.o $(OBJ_DIR)/StringDataSink.o $(OBJ_DIR)/XMLReader.o $(OBJ_DIR)/StringDataSource.o $(OBJ_DIR)/StringUtils.o
+	$(CXX) -o $(BIN_DIR)/xmltest $(OBJ_DIR)/XMLTest.o $(OBJ_DIR)/XMLWriter.o $(OBJ_DIR)/StringDataSink.o $(OBJ_DIR)/XMLReader.o $(OBJ_DIR)/StringDataSource.o $(OBJ_DIR)/StringUtils.o $(LDFLAGS) 
 
 $(OBJ_DIR)/XMLTest.o: $(TESTSRC_DIR)/XMLTest.cpp $(SRC_DIR)/StringDataSink.cpp $(SRC_DIR)/StringDataSource.cpp
 	$(CXX) -o $(OBJ_DIR)/XMLTest.o $(CXXFLAG) -c $(TESTSRC_DIR)/XMLTest.cpp
 
-$(OBJ_DIR)/XMLWriter.o: $(SRC_DIR)/XMLWriter.cpp $(INC_DIR)/XMLWriter.h
+$(OBJ_DIR)/XMLWriter.o: $(SRC_DIR)/XMLWriter.cpp $(INC_DIR)/XMLWriter.h $(INC_DIR)/StringUtils.h
 	$(CXX) -o $(OBJ_DIR)/XMLWriter.o $(CXXFLAG) -c $(SRC_DIR)/XMLWriter.cpp
 
 $(OBJ_DIR)/XMLReader.o: $(SRC_DIR)/XMLReader.cpp $(INC_DIR)/XMLReader.h

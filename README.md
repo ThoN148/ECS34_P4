@@ -3,7 +3,7 @@
 Student 1: Tho Nguyen (921017457)
 
 ## Project Status
-This the current status of the project unfinished
+This the current status of the project unfinished.
 
 ## Known Issues
 The project fails to function properly in KML MakeFile, all of the Transportation Planning and Command Lines.
@@ -11,7 +11,7 @@ The project fails to function properly in KML MakeFile, all of the Transportatio
 ## Code References
 
 ## Generative AI Use
-I used ChatGPT for Prompt 1, and ZZZZZ for Prompt 2....
+I used ChatGPT for Prompt 1 and Prompt 2
 
 ### Prompt 1
 How can I calculate the minutes and second with a given location of latitude and longitude? 
@@ -69,12 +69,101 @@ This code defines a function decimalToDMS that takes a decimal degree value and 
 
 ### Chagnes 1
 I was having issues figuring out how to solve / get an idea for the Command Line portion. Specifically the Node portion where we had to give the information for minutes seconds and degrees based on the node we retrieved.
+I added the given void function to my program in order to help me execute the information by calling it with my given variables.
+void decimalToDMS(double decimal, int& degrees, int& minutes, int& seconds) {
+    // Extract the degrees
+    degrees = static_cast<int>(decimal);
+
+    // Calculate the remaining fractional part
+    double fractionalPart = std::abs(decimal - degrees);
+
+    // Convert the fractional part to minutes (60 minutes in a degree)
+    double minutesDecimal = fractionalPart * 60;
+
+    // Extract the minutes
+    minutes = static_cast<int>(minutesDecimal);
+
+    // Calculate the remaining fractional part for seconds
+    double secondsDecimal = (minutesDecimal - minutes) * 60;
+
+    // Round to the nearest integer for seconds
+    seconds = static_cast<int>(secondsDecimal + 0.5); // Adding 0.5 for proper rounding
+}
 
 ### Prompt 2
-My other prompt...
+How can i check which direction its should be based on the latitude and longitude degrees? So like south north east or west
 
 ### Response 2
-The other response...
+To determine the direction (North, South, East, or West) based on latitude and longitude degrees, you can follow these guidelines:
+
+Latitude:
+
+If the latitude is positive, it is in the northern hemisphere.
+If the latitude is negative, it is in the southern hemisphere.
+Longitude:
+
+If the longitude is positive, it is in the eastern hemisphere.
+If the longitude is negative, it is in the western hemisphere.
+Combining these rules, you can determine the direction:
+
+If latitude is positive, it's in the northern hemisphere.
+If longitude is positive, it's in the eastern hemisphere.
+If longitude is negative, it's in the western hemisphere.
+If latitude is negative, it's in the southern hemisphere.
+If longitude is positive, it's in the eastern hemisphere.
+If longitude is negative, it's in the western hemisphere.
+Here's how you can implement it in C++:
+
+cpp
+Copy code
+#include <iostream>
+#include <string>
+
+std::string getDirection(double latitude, double longitude) {
+    if (latitude >= 0) {
+        if (longitude >= 0) {
+            return "North-East";
+        } else {
+            return "North-West";
+        }
+    } else {
+        if (longitude >= 0) {
+            return "South-East";
+        } else {
+            return "South-West";
+        }
+    }
+}
+
+int main() {
+    double latitude = 38.8977;
+    double longitude = -77.0365;
+
+    std::string direction = getDirection(latitude, longitude);
+    std::cout << "The location is in the " << direction << " direction." << std::endl;
+
+    return 0;
+}
+This code will output:
+
+csharp
+Copy code
+The location is in the North-West direction.
+You can adjust the latitude and longitude values to test different directions.
 
 ### Changes 2
-The other changes made...
+I was confused on how to figure out which direction it would be based on the latitude and longitude data.
+So I added this to my based off the response I recieved.
+if(LatDeg < 0){
+    LatDirection = "S";
+}
+else{
+    LatDirection = "N";
+}
+
+if(LonDeg < 0){
+    LonDirection = "W";
+}
+else{
+    LonDirection = "E";
+}
