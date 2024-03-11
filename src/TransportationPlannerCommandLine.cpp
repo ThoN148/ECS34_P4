@@ -1,6 +1,7 @@
 #include "TransportationPlannerCommandLine.h"
 #include "StringUtils.h"
 #include "GeographicUtils.h"
+#include "DijkstraPathRouter.h"
 #include "DSVReader.h"
 #include <algorithm>
 #include <iostream>
@@ -22,10 +23,33 @@ struct CTransportationPlannerCommandLine::SImplementation{
         DPlanner = planner;
     }
     
+    // AI Generated!!!
+    // Prompt 1 - How can I calculate the minutes and second with a given location of latitude and longitude? 
+    void decimalToDMS(double decimal, int& degrees, int& minutes, int& seconds) {
+        // Extract the degrees
+        degrees = static_cast<int>(decimal);
+
+        // Calculate the remaining fractional part
+        double fractionalPart = std::abs(decimal - degrees);
+
+        // Convert the fractional part to minutes (60 minutes in a degree)
+        double minutesDecimal = fractionalPart * 60;
+
+        // Extract the minutes
+        minutes = static_cast<int>(minutesDecimal);
+
+        // Calculate the remaining fractional part for seconds
+        double secondsDecimal = (minutesDecimal - minutes) * 60;
+
+        // Round to the nearest integer for seconds
+        seconds = static_cast<int>(secondsDecimal + 0.5); // Adding 0.5 for proper rounding
+    }
+
     bool ProcessCommands(){
         std::string Read_Command;
         std::string Command_Output;
         std::string Error_Output;
+        bool Numeric = true;
         while(true){
 
             CDSVReader Command(DCmdSrc, '\n');
@@ -34,6 +58,7 @@ struct CTransportationPlannerCommandLine::SImplementation{
             Command.ReadRow(StringVector);
 
             for(int i = 0;i < StringVector.size(); i++){
+                std::vector < std::string > WordList = {"help", "exit", "count", "node", "fastest", "shortest", "save", "print"};
                 std::cout << StringVector[i] << "\n";
 
                 if(StringVector[i] == "help"){
@@ -53,7 +78,7 @@ struct CTransportationPlannerCommandLine::SImplementation{
                                     "save     Saves the last calculated path to file\n"
                                     "print    Prints the steps for the last calculated path\n";
                 }
-                if(StringVector[i] == "count"){
+                else if(StringVector[i] == "count"){
                     //
                     Command_Output += "> ";
 
@@ -61,18 +86,34 @@ struct CTransportationPlannerCommandLine::SImplementation{
                     std::string NCString = std::to_string(NodeCount);
                     Command_Output += NCString + " nodes\n";
                 }
-                if(StringVector[i].substr(0,4) == "node"){
+                else if(StringVector[i].substr(0,4) == "node"){
                     Command_Output += "> ";
                     // check if there nodes and if they exist
                     if(StringVector[i].size() == 4){
+                        Error_Output += "Invalid node command, see help.\n";
                         break;
                     }
 
                     // If node exists
                     auto TempString = StringVector[i].substr(4);
-                    //std::cout << "TempString:" << TempString << "\n";
                     auto NodeID = StringUtils::Split(StringUtils::Strip(TempString));
-                    
+
+                    // Checks if the input are all numbers, is not then it breaks off the code
+                    for(int i = 0; i < NodeID.size(); i++){
+                        for(char c : NodeID[i]){
+                            if (!std::isdigit(c)) {
+                                //std::cout << c << "\n";
+                                Numeric = false;
+                            }
+                        }
+                    }
+
+                    if(Numeric == false){
+                        Numeric = true;
+                        Error_Output += "Invalid node parameter, see help.\n";
+                        break;
+                    }
+
                     auto Node = DPlanner->SortedNodeByIndex(std::stoi(NodeID[0]));
                     auto Location = Node->Location();
 
@@ -81,33 +122,129 @@ struct CTransportationPlannerCommandLine::SImplementation{
                     // Degree is the Locations
                     // Minutes is distance
 
-                    // Converts the locations properly - ASSISTED
-                    int Lat_Deg = Location.first;
-                    int Lat_Min = static_cast< int > ((Location.first - Lat_Deg) * 60);
-                    int Lat_Sec = static_cast< int > (((Location.first - Lat_Deg) * 60 - Lat_Min) * 60);
+                    // AI Generated!!!
+                    // Prompt 1 - How can I calculate the minutes and second with a given location of latitude and longitude?  
+                    int LatDeg, LatMin, LatSec;
+                    int LonDeg, LonMin, LonSec;
+                    std::string LatDirection, LonDirection;
 
-                    int Lon_Deg = static_cast< int > (std::abs(Location.second));
-                    int Lon_Min = static_cast< int > ((std::abs(Location.second) - Lon_Deg) * 60);
-                    int Lon_Sec = static_cast< int > (((std::abs(Location.second) - Lon_Deg) * 60 - Lon_Min) * 60);
-                    
-                    std::string lat_str = std::to_string(Lat_Deg) + "d " + std::to_string(Lat_Min) + "' " + std::to_string(Lat_Sec) + "\" N";
-                    std::string lon_str = std::to_string(Lon_Deg) + "d " + std::to_string(Lon_Min) + "' " + std::to_string(Lon_Sec) + "\" " + (Location.second < 0 ? "W" : "E"); // Use "W" for negative longitudes and "E" for positive
+                    decimalToDMS(Location.first, LatDeg, LatMin, LatSec);
+                    decimalToDMS(Location.second, LonDeg, LonMin, LonSec);
+
+                    if(LatDeg < 0){
+                        LatDirection = "S";
+                    }
+                    else{
+                        LatDirection = "N";
+                    }
+
+                    if(LonDeg < 0){
+                        LonDirection = "W";
+                    }
+                    else{
+                        LonDirection = "E";
+                    }
+
+                    LatDeg = std::abs(LatDeg);
+                    LonDeg = std::abs(LonDeg);
+
+                    std::string lat_str = std::to_string(LatDeg) + "d " + std::to_string(LatMin) + "' " + std::to_string(LatSec) + "\" " + LatDirection;
+                    std::string lon_str = std::to_string(LonDeg) + "d " + std::to_string(LonMin) + "' " + std::to_string(LonSec) + "\" " + LonDirection;
 
                     Command_Output += "Node " + NodeID[0] + ": id = " + std::to_string(Node->ID()) + " is at " + lat_str + ", " + lon_str + "\n";
                 }
-                if(StringVector[i].substr(0,8) == "shortest"){
+                else if(StringVector[i].substr(0,8) == "shortest"){
                     //Checks for inputs
+                    Command_Output += "> ";
+
                     if(StringVector[i].size() == 8){
+                        Error_Output += "Invalid shortest command, see help.\n";
                         break;
                     }
-                    Command_Output += "> ";
-                    
+
+                    auto TempString = StringVector[i].substr(8);
+                    auto InputVector = StringUtils::Split(StringUtils::Strip(TempString));
+                    auto SrcNode = InputVector[0];
+                    auto DestNode = InputVector[1];
 
 
+                    // Checks if the input are all numbers, is not then it breaks off the code
+                    for(int i = 0; i < InputVector.size(); i++){
+                        for(char c : InputVector[i]){
+                            if (!std::isdigit(c)) {
+                                //std::cout << c << "\n";
+                                Numeric = false;
+                            }
+
+                        }
+                    }
+
+                    if(Numeric == false){
+                        Numeric = true;
+                        Error_Output += "Invalid shortest parameter, see help.\n";
+                        break;
+                    }
+
+                    std::vector< CTransportationPlanner::TNodeID > Route;
+
+                    auto Time = DPlanner->FindShortestPath(std::stoi(SrcNode), std::stoi(DestNode), Route);
+                    std::string TimeString = std::to_string(Time).substr(0,3);
+
+                    Command_Output += "Shortest path is " + TimeString + " mi.\n";
                 }
-                if(StringVector[i] == "exit"){
+                else if(StringVector[i].substr(0,7) == "fastest"){
+                    //Checks for inputs
+                    Command_Output += "> ";
+
+                    if(StringVector[i].size() == 7){
+                        Error_Output += "Invalid fastest command, see help.\n";
+                        break;
+                    }
+                    
+                    auto TempString = StringVector[i].substr(7);
+                    auto InputVector = StringUtils::Split(StringUtils::Strip(TempString));
+                    //auto SrcNode = InputVector[0];
+                    //auto DestNode = InputVector[1];
+
+                    // Checks if the input are all numbers, is not then it breaks off the code
+                    for(int i = 0; i < InputVector.size(); i++){
+                        for(char c : InputVector[i]){
+                            if (!std::isdigit(c)) {
+                                //std::cout << c << "\n";
+                                Numeric = false;
+                            }
+
+                        }
+                    }
+
+                    if(Numeric == false){
+                        Numeric = true;
+                        Error_Output += "Invalid fastest parameter, see help.\n";
+                        break;
+                    }
+                }
+                else if(StringVector[i] == "save"){
+                    //Checks for inputs
+                    Command_Output += "> ";
+                    Error_Output += "No valid path to save, see help.\n";
+                }
+                else if(StringVector[i] == "print"){
+                    //Checks for inputs
+                    Command_Output += "> ";
+                    Error_Output += "No valid path to print, see help.\n";
+                }
+                else if(StringVector[i] == "exit"){
                     Command_Output += "> ";
                     break;
+                }
+                else{
+                    auto word = std::find(WordList.begin(), WordList.end(), StringVector[0]);
+                    if(word == WordList.end()){
+                        std::cout << "WorldList Error: "+ StringVector[0] + "\n";
+                        Command_Output += "> ";
+                        Error_Output += "Unknown command \"" + StringVector[0] + "\" type help for help.\n";
+                        break;
+                    }
                 }
             }
 
@@ -115,7 +252,7 @@ struct CTransportationPlannerCommandLine::SImplementation{
                 break;
             }
         }
-
+        std::cout << Command_Output + "\n";
         DOutSink->Write(std::vector<char>(Command_Output.begin(), Command_Output.end()));
         DErrSink->Write(std::vector<char>(Error_Output.begin(), Error_Output.end()));
         return true;

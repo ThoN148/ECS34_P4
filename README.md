@@ -14,35 +14,61 @@ The project fails to function properly in KML MakeFile, all of the Transportatio
 I used ChatGPT for Prompt 1, and ZZZZZ for Prompt 2....
 
 ### Prompt 1
-How do I iterate over all characters in a string in C++17?
+How can I calculate the minutes and second with a given location of latitude and longitude? 
 
 ### Response 1
-In C++17, you can iterate over all characters in a string using a range-based for loop. Here's an example:
-```cpp
+To calculate the minutes and seconds from a latitude or longitude value, you typically convert the fractional part of the degree into minutes and seconds. Here's how you can do it in C++:
+
+cpp
+Copy code
 #include <iostream>
-#include <string>
+#include <cmath>
+
+void decimalToDMS(double decimal, int& degrees, int& minutes, int& seconds) {
+    // Extract the degrees
+    degrees = static_cast<int>(decimal);
+
+    // Calculate the remaining fractional part
+    double fractionalPart = std::abs(decimal - degrees);
+
+    // Convert the fractional part to minutes (60 minutes in a degree)
+    double minutesDecimal = fractionalPart * 60;
+
+    // Extract the minutes
+    minutes = static_cast<int>(minutesDecimal);
+
+    // Calculate the remaining fractional part for seconds
+    double secondsDecimal = (minutesDecimal - minutes) * 60;
+
+    // Round to the nearest integer for seconds
+    seconds = static_cast<int>(secondsDecimal + 0.5); // Adding 0.5 for proper rounding
+}
 
 int main() {
-    std::string myString = "Hello, World!";
+    // Example latitude and longitude values
+    double latitude = 38.6000000000; // Example latitude value
+    double longitude = -121.7800000000; // Example longitude value
 
-    // Using range-based for loop to iterate over characters in the string
-    for (char c : myString) {
-        std::cout << c << " ";
-    }
+    // Variables to store degrees, minutes, and seconds
+    int latDegrees, latMinutes, latSeconds;
+    int lonDegrees, lonMinutes, lonSeconds;
+
+    // Convert latitude to degrees, minutes, and seconds
+    decimalToDMS(latitude, latDegrees, latMinutes, latSeconds);
+
+    // Convert longitude to degrees, minutes, and seconds
+    decimalToDMS(longitude, lonDegrees, lonMinutes, lonSeconds);
+
+    // Output the results
+    std::cout << "Latitude: " << latDegrees << "d " << latMinutes << "' " << latSeconds << "\" N" << std::endl;
+    std::cout << "Longitude: " << lonDegrees << "d " << lonMinutes << "' " << lonSeconds << "\" W" << std::endl;
 
     return 0;
 }
-```
-In this example, the `for (char c : myString)` loop iterates over each character in the string `myString`, and the variable `c` takes on the value of each character in turn. The loop body prints each character followed by a space.
-
-This is a concise and readable way to iterate over the characters in a string in C++17.
+This code defines a function decimalToDMS that takes a decimal degree value and calculates the equivalent degrees, minutes, and seconds. The main function demonstrates how to use this function to convert latitude and longitude values.
 
 ### Chagnes 1
-I only needed the `for` loop part, and my string was named `bar` so I changed it to just:
-```cpp
-// AI Generated
-for (char c : bar) {
-```
+I was having issues figuring out how to solve / get an idea for the Command Line portion. Specifically the Node portion where we had to give the information for minutes seconds and degrees based on the node we retrieved.
 
 ### Prompt 2
 My other prompt...
