@@ -1,5 +1,9 @@
 #include "TransportationPlannerCommandLine.h"
+#include "StringUtils.h"
+#include "GeographicUtils.h"
+#include "DSVReader.h"
 #include <algorithm>
+#include <iostream>
 
 struct CTransportationPlannerCommandLine::SImplementation{
 
@@ -18,85 +22,102 @@ struct CTransportationPlannerCommandLine::SImplementation{
         DPlanner = planner;
     }
     
-    bool ProcessCommands(){ 
-        std::vector< char > CharBuffer(2560);
-        std::size_t CharBufferSize = CharBuffer.size();
-        bool ExitFlag = false;
-        bool ErrorFlag = false;
+    bool ProcessCommands(){
+        std::string Read_Command;
+        std::string Command_Output;
+        std::string Error_Output;
+        while(true){
+
+            CDSVReader Command(DCmdSrc, '\n');
+            std::vector<std::string> StringVector;
+
+            Command.ReadRow(StringVector);
+
+            for(int i = 0;i < StringVector.size(); i++){
+                std::cout << StringVector[i] << "\n";
+
+                if(StringVector[i] == "help"){
+                    //
+                    Command_Output += "> ";
+
+                    Command_Output += "------------------------------------------------------------------------\n"
+                                    "help     Display this help menu\n"
+                                    "exit     Exit the program\n"
+                                    "count    Output the number of nodes in the map\n"
+                                    "node     Syntax \"node [0, count)\" \n"
+                                    "         Will output node ID and Lat/Lon for node\n"
+                                    "fastest  Syntax \"fastest start end\" \n"
+                                    "         Calculates the time for fastest path from start to end\n"
+                                    "shortest Syntax \"shortest start end\" \n"
+                                    "         Calculates the distance for the shortest path from start to end\n"
+                                    "save     Saves the last calculated path to file\n"
+                                    "print    Prints the steps for the last calculated path\n";
+                }
+                if(StringVector[i] == "count"){
+                    //
+                    Command_Output += "> ";
+
+                    int NodeCount = DPlanner->NodeCount();
+                    std::string NCString = std::to_string(NodeCount);
+                    Command_Output += NCString + " nodes\n";
+                }
+                if(StringVector[i].substr(0,4) == "node"){
+                    Command_Output += "> ";
+                    // check if there nodes and if they exist
+                    if(StringVector[i].size() == 4){
+                        break;
+                    }
+
+                    // If node exists
+                    auto TempString = StringVector[i].substr(4);
+                    //std::cout << "TempString:" << TempString << "\n";
+                    auto NodeID = StringUtils::Split(StringUtils::Strip(TempString));
+                    
+                    auto Node = DPlanner->SortedNodeByIndex(std::stoi(NodeID[0]));
+                    auto Location = Node->Location();
+
+                    // "Node 0: id = 1234 is at 38d 36' 0\" N, 121d 46' 48\" W\n"
+                    // Degree, Minutes, Seconds
+                    // Degree is the Locations
+                    // Minutes is distance
+
+                    // Converts the locations properly - ASSISTED
+                    int Lat_Deg = Location.first;
+                    int Lat_Min = static_cast< int > ((Location.first - Lat_Deg) * 60);
+                    int Lat_Sec = static_cast< int > (((Location.first - Lat_Deg) * 60 - Lat_Min) * 60);
+
+                    int Lon_Deg = static_cast< int > (std::abs(Location.second));
+                    int Lon_Min = static_cast< int > ((std::abs(Location.second) - Lon_Deg) * 60);
+                    int Lon_Sec = static_cast< int > (((std::abs(Location.second) - Lon_Deg) * 60 - Lon_Min) * 60);
+                    
+                    std::string lat_str = std::to_string(Lat_Deg) + "d " + std::to_string(Lat_Min) + "' " + std::to_string(Lat_Sec) + "\" N";
+                    std::string lon_str = std::to_string(Lon_Deg) + "d " + std::to_string(Lon_Min) + "' " + std::to_string(Lon_Sec) + "\" " + (Location.second < 0 ? "W" : "E"); // Use "W" for negative longitudes and "E" for positive
+
+                    Command_Output += "Node " + NodeID[0] + ": id = " + std::to_string(Node->ID()) + " is at " + lat_str + ", " + lon_str + "\n";
+                }
+                if(StringVector[i].substr(0,8) == "shortest"){
+                    //Checks for inputs
+                    if(StringVector[i].size() == 8){
+                        break;
+                    }
+                    Command_Output += "> ";
+                    
 
 
-        while (!ExitFlag && DCmdSrc->Read(CharBuffer, CharBufferSize)) {
-            //
-            std::size_t NewLine = std::find(CharBuffer.begin(), CharBuffer.end(), '\n') - CharBuffer.begin();
-            if (NewLine > CharBuffer.size()) {
-                NewLine = std::find(CharBuffer.begin(), CharBuffer.end(), '\0') - CharBuffer.begin();
+                }
+                if(StringVector[i] == "exit"){
+                    Command_Output += "> ";
+                    break;
+                }
             }
-            std::string command(CharBuffer.begin(), CharBuffer.begin() + NewLine);
 
-            std::string Command_Output;
-            std::string Error_Output;
-
-            // Write the prompt to the output sink
-            if (!ExitFlag) {
-                std::string prompt = "> ";
-                DOutSink->Write(std::vector<char>(prompt.begin(), prompt.end()));
+            if(StringVector[0] == "exit"){
+                break;
             }
-
-            if (command == "help") {
-                Command_Output = "------------------------------------------------------------------------\n"
-                            "help     Display this help menu\n"
-                            "exit     Exit the program\n"
-                            "count    Output the number of nodes in the map\n"
-                            "node     Syntax \"node [0, count)\" \n"
-                            "         Will output node ID and Lat/Lon for node\n"
-                            "fastest  Syntax \"fastest start end\" \n"
-                            "         Calculates the time for fastest path from start to end\n"
-                            "shortest Syntax \"shortest start end\" \n"
-                            "         Calculates the distance for the shortest path from start to end\n"
-                            "save     Saves the last calculated path to file\n"
-                            "print    Prints the steps for the last calculated path\n";
-            }
-            else if(command == "count"){
-
-            }
-            else if(command == "node 0"){
-
-            }
-            else if(command == "fastest"){
-
-            }
-            else if(command == "shortest"){
-
-            }
-            else if(command == "save"){
-
-            }
-            else if(command == "print"){
-
-            }
-            else if(command == "exit"){
-                ExitFlag = true;
-            }
-
-
-            // Checks if there is an exit flag, is so close/exit properly
-            /*if(ExitFlag){
-                std::string EndLine = "> ";
-                DOutSink->Write(std::vector< char >(EndLine.begin(), EndLine.end()));
-            }*/
-
-            // Gets the command output through the if statements and then prints it out to the output sink
-            // Write the output to the output sink
-            DOutSink->Write(std::vector<char>(Command_Output.begin(), Command_Output.end()));
-            DErrSink->Write(std::vector<char>(Error_Output.begin(), Error_Output.end()));
-
-            if (!ExitFlag) {
-                std::string prompt = "> ";
-                DOutSink->Write(std::vector<char>(prompt.begin(), prompt.end()));
-            }
-
         }
-    
+
+        DOutSink->Write(std::vector<char>(Command_Output.begin(), Command_Output.end()));
+        DErrSink->Write(std::vector<char>(Error_Output.begin(), Error_Output.end()));
         return true;
     }
 };

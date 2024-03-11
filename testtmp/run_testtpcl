@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="9" failures="5" disabled="0" errors="0" time="0" timestamp="2024-03-11T04:13:19.525" name="AllTests">
+  <testsuite name="TransporationPlannerCommandLine" tests="9" failures="5" disabled="0" skipped="0" errors="0" time="0" timestamp="2024-03-11T04:13:19.525">
+    <testcase name="SimpleTest" file="./testsrc/TPCommandLineTest.cpp" line="31" status="run" result="completed" time="0" timestamp="2024-03-11T04:13:19.525" classname="TransporationPlannerCommandLine" />
+    <testcase name="HelpTest" file="./testsrc/TPCommandLineTest.cpp" line="45" status="run" result="completed" time="0" timestamp="2024-03-11T04:13:19.525" classname="TransporationPlannerCommandLine" />
+    <testcase name="CountTest" file="./testsrc/TPCommandLineTest.cpp" line="73" status="run" result="completed" time="0" timestamp="2024-03-11T04:13:19.525" classname="TransporationPlannerCommandLine" />
+    <testcase name="NodeTest" file="./testsrc/TPCommandLineTest.cpp" line="94" status="run" result="completed" time="0" timestamp="2024-03-11T04:13:19.525" classname="TransporationPlannerCommandLine" />
+    <testcase name="ShortestTest" file="./testsrc/TPCommandLineTest.cpp" line="124" status="run" result="completed" time="0" timestamp="2024-03-11T04:13:19.525" classname="TransporationPlannerCommandLine">
+      <failure message="./testsrc/TPCommandLineTest.cpp:140&#x0A;Expected equality of these values:&#x0A;  OutputSink-&gt;String()&#x0A;    Which is: &quot;&gt; &gt; &quot;&#x0A;  &quot;&gt; &quot; &quot;Shortest path is 5.2 mi.\n&quot; &quot;&gt; &quot;&#x0A;    Which is: &quot;&gt; Shortest path is 5.2 mi.\n&gt; &quot;&#x0A;With diff:&#x0A;@@ -1,1 +1,2 @@&#x0A;-&gt; &gt; &#x0A;+&gt; Shortest path is 5.2 mi.&#x0A;+&gt; &#x0A;" type=""><![CDATA[./testsrc/TPCommandLineTest.cpp:140
+Expected equality of these values:
+  OutputSink->String()
+    Which is: "> > "
+  "> " "Shortest path is 5.2 mi.\n" "> "
+    Which is: "> Shortest path is 5.2 mi.\n> "
+With diff:
+@@ -1,1 +1,2 @@
+-> > 
++> Shortest path is 5.2 mi.
++> 
+]]></failure>
+    </testcase>
+    <testcase name="FastestTest" file="./testsrc/TPCommandLineTest.cpp" line="146" status="run" result="completed" time="0" timestamp="2024-03-11T04:13:19.525" classname="TransporationPlannerCommandLine">
+      <failure message="./testsrc/TPCommandLineTest.cpp:163&#x0A;Expected equality of these values:&#x0A;  OutputSink-&gt;String()&#x0A;    Which is: &quot;&gt; &quot;&#x0A;  &quot;&gt; &quot; &quot;Fastest path takes 39 min.\n&quot; &quot;&gt; &quot;&#x0A;    Which is: &quot;&gt; Fastest path takes 39 min.\n&gt; &quot;&#x0A;With diff:&#x0A;@@ +1,2 @@&#x0A;+&gt; Fastest path takes 39 min.&#x0A; &gt; &#x0A;" type=""><![CDATA[./testsrc/TPCommandLineTest.cpp:163
+Expected equality of these values:
+  OutputSink->String()
+    Which is: "> "
+  "> " "Fastest path takes 39 min.\n" "> "
+    Which is: "> Fastest path takes 39 min.\n> "
+With diff:
+@@ +1,2 @@
++> Fastest path takes 39 min.
+ > 
+]]></failure>
+    </testcase>
+    <testcase name="PrintTest" file="./testsrc/TPCommandLineTest.cpp" line="169" status="run" result="completed" time="0" timestamp="2024-03-11T04:13:19.525" classname="TransporationPlannerCommandLine">
+      <failure message="./testsrc/TPCommandLineTest.cpp:198&#x0A;Expected equality of these values:&#x0A;  OutputSink-&gt;String()&#x0A;    Which is: &quot;&gt; &quot;&#x0A;  &quot;&gt; &quot; &quot;Fastest path takes 39 min.\n&quot; &quot;&gt; &quot; &quot;Start at 38d 23&apos; 60\&quot; N, 121d 43&apos; 12\&quot; W\n&quot; &quot;Bike N toward Main St. for 6.9 mi\n&quot; &quot;Bike W along Main St. for 4.3 mi\n&quot; &quot;Bike N along B St. for 3.5 mi\n&quot; &quot;End at 38d 32&apos; 60\&quot; N, 121d 47&apos; 60\&quot; W\n&quot; &quot;&gt; &quot;&#x0A;    Which is: &quot;&gt; Fastest path takes 39 min.\n&gt; Start at 38d 23&apos; 60\&quot; N, 121d 43&apos; 12\&quot; W\nBike N toward Main St. for 6.9 mi\nBike W along Main St. for 4.3 mi\nBike N along B St. for 3.5 mi\nEnd at 38d 32&apos; 60\&quot; N, 121d 47&apos; 60\&quot; W\n&gt; &quot;&#x0A;With diff:&#x0A;@@ +1,7 @@&#x0A;+&gt; Fastest path takes 39 min.&#x0A;+&gt; Start at 38d 23&apos; 60\&quot; N, 121d 43&apos; 12\&quot; W&#x0A;+Bike N toward Main St. for 6.9 mi&#x0A;+Bike W along Main St. for 4.3 mi&#x0A;+Bike N along B St. for 3.5 mi&#x0A;+End at 38d 32&apos; 60\&quot; N, 121d 47&apos; 60\&quot; W&#x0A; &gt; &#x0A;" type=""><![CDATA[./testsrc/TPCommandLineTest.cpp:198
+Expected equality of these values:
+  OutputSink->String()
+    Which is: "> "
+  "> " "Fastest path takes 39 min.\n" "> " "Start at 38d 23' 60\" N, 121d 43' 12\" W\n" "Bike N toward Main St. for 6.9 mi\n" "Bike W along Main St. for 4.3 mi\n" "Bike N along B St. for 3.5 mi\n" "End at 38d 32' 60\" N, 121d 47' 60\" W\n" "> "
+    Which is: "> Fastest path takes 39 min.\n> Start at 38d 23' 60\" N, 121d 43' 12\" W\nBike N toward Main St. for 6.9 mi\nBike W along Main St. for 4.3 mi\nBike N along B St. for 3.5 mi\nEnd at 38d 32' 60\" N, 121d 47' 60\" W\n> "
+With diff:
+@@ +1,7 @@
++> Fastest path takes 39 min.
++> Start at 38d 23' 60\" N, 121d 43' 12\" W
++Bike N toward Main St. for 6.9 mi
++Bike W along Main St. for 4.3 mi
++Bike N along B St. for 3.5 mi
++End at 38d 32' 60\" N, 121d 47' 60\" W
+ > 
+]]></failure>
+    </testcase>
+    <testcase name="SaveTest" file="./testsrc/TPCommandLineTest.cpp" line="210" status="run" result="completed" time="0" timestamp="2024-03-11T04:13:19.525" classname="TransporationPlannerCommandLine">
+      <failure message="./testsrc/TPCommandLineTest.cpp:235&#x0A;Expected equality of these values:&#x0A;  OutputSink-&gt;String()&#x0A;    Which is: &quot;&gt; &quot;&#x0A;  &quot;&gt; &quot; &quot;Fastest path takes 1 hr 22 min 30 sec.\n&quot; &quot;&gt; &quot; &quot;Path saved to &lt;results&gt;/123_456_1.375000hr.csv\n&quot; &quot;&gt; &quot;&#x0A;    Which is: &quot;&gt; Fastest path takes 1 hr 22 min 30 sec.\n&gt; Path saved to &lt;results&gt;/123_456_1.375000hr.csv\n&gt; &quot;&#x0A;With diff:&#x0A;@@ +1,3 @@&#x0A;+&gt; Fastest path takes 1 hr 22 min 30 sec.&#x0A;+&gt; Path saved to &lt;results&gt;/123_456_1.375000hr.csv&#x0A; &gt; &#x0A;" type=""><![CDATA[./testsrc/TPCommandLineTest.cpp:235
+Expected equality of these values:
+  OutputSink->String()
+    Which is: "> "
+  "> " "Fastest path takes 1 hr 22 min 30 sec.\n" "> " "Path saved to <results>/123_456_1.375000hr.csv\n" "> "
+    Which is: "> Fastest path takes 1 hr 22 min 30 sec.\n> Path saved to <results>/123_456_1.375000hr.csv\n> "
+With diff:
+@@ +1,3 @@
++> Fastest path takes 1 hr 22 min 30 sec.
++> Path saved to <results>/123_456_1.375000hr.csv
+ > 
+]]></failure>
+      <failure message="./testsrc/TPCommandLineTest.cpp:240&#x0A;Expected equality of these values:&#x0A;  SaveSink-&gt;String()&#x0A;    Which is: &quot;&quot;&#x0A;  &quot;mode,node_id\n&quot; &quot;Walk,10\n&quot; &quot;Walk,9\n&quot; &quot;Bus,8\n&quot; &quot;Bus,7\n&quot; &quot;Walk,6&quot;&#x0A;    Which is: &quot;mode,node_id\nWalk,10\nWalk,9\nBus,8\nBus,7\nWalk,6&quot;&#x0A;With diff:&#x0A;@@ -1,1 +1,6 @@&#x0A;-&quot;&quot;&#x0A;+mode,node_id&#x0A;+Walk,10&#x0A;+Walk,9&#x0A;+Bus,8&#x0A;+Bus,7&#x0A;+Walk,6&#x0A;" type=""><![CDATA[./testsrc/TPCommandLineTest.cpp:240
+Expected equality of these values:
+  SaveSink->String()
+    Which is: ""
+  "mode,node_id\n" "Walk,10\n" "Walk,9\n" "Bus,8\n" "Bus,7\n" "Walk,6"
+    Which is: "mode,node_id\nWalk,10\nWalk,9\nBus,8\nBus,7\nWalk,6"
+With diff:
+@@ -1,1 +1,6 @@
+-""
++mode,node_id
++Walk,10
++Walk,9
++Bus,8
++Bus,7
++Walk,6
+]]></failure>
+    </testcase>
+    <testcase name="ErrorTest" file="./testsrc/TPCommandLineTest.cpp" line="249" status="run" result="completed" time="0" timestamp="2024-03-11T04:13:19.525" classname="TransporationPlannerCommandLine">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;stoi&quot; thrown in the test body." type=""><![CDATA[unknown file
+C++ exception with description "stoi" thrown in the test body.]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -92,7 +92,8 @@ TEST(TransporationPlannerCommandLine, CountTest){
 }
 
 TEST(TransporationPlannerCommandLine, NodeTest){
-    auto InputSource = std::make_shared<CStringDataSource>("node 0\nexit\n");
+    auto InputSource = std::make_shared<CStringDataSource>( "node 0\n"
+                                                            "exit\n");
     auto OutputSink = std::make_shared<CStringDataSink>();
     auto ErrorSink = std::make_shared<CStringDataSink>();
     auto MockPlanner = std::make_shared<CMockTransportationPlanner>();
